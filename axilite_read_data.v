@@ -15,8 +15,8 @@ module axilite_read_data
     output			deassert_addr,
     output reg [DATA_WIDTH-1:0]	rdata,
     output reg [1:0]		rresp,
-    output reg			rvalid,
-    input			rready
+    output reg			rready,
+    input			rvalid
     );
 
    task do_reset();
@@ -28,23 +28,23 @@ module axilite_read_data
    // * 8 is due to byte level addressing, should turn into bitshift
    // - DATA_WIDTH is due to axilite requiring full burst every time
    assign addr_out_of_range = addr*8 > DATA_SIZE - DATA_WIDTH;
+   assign deassert_addr = ~addr_out_of_range && addr_good && rready;
 
    task read_data();
       begin
-	 if(addr_out_of_range) begin
+	 if(addr_out_of_range || ~addr_good) begin
 	    rresp <= RESP_SLVERR;
 	 end else begin
 	    rresp <= RESP_OKAY;
 	    rdata <= data[addr*8 +: DATA_WIDTH];
 	 end
-	 rvalid <= 1;
-	 deassert_addr <= 1;
+	 rready <= 1;
       end
    endtask // read_data
 
    task idle();
       begin
-	 rvalid <= 0;
+	 rready <= 0;
 	 deassert_addr <= 0;
       end
    endtask // idle
@@ -54,7 +54,7 @@ module axilite_read_data
 	 do_reset();
       end
       else begin
-	 if(rready) begin
+	 if(rvalid) begin
 	    read_data();
 	 end else begin
 	    idle();

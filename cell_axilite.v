@@ -1,6 +1,7 @@
 module cell_axilite
-  #(parameter ADDR_WIDTH = 32
-    parameter DATA_WIDTH = 32)
+  #(parameter ADDR_WIDTH = 32,
+    parameter DATA_WIDTH = 32,
+    parameter DATA_RESET = 0)
    (
     input		    aclk,
     input		    aresetn,
@@ -23,7 +24,9 @@ module cell_axilite
     output		    awready,
     // write data channel
     input [DATA_WIDTH-1:0]  wdata,
-    input		    wstrb,
+    input [num_strobe-1:0]  wstrb,
+    input		    wvalid,
+    output		    wready,
     // write response channel
     output [1:0]	    bresp,
     output		    bvalid,
@@ -39,8 +42,9 @@ module cell_axilite
    // response definitions for bresp,rresp, etc
    localparam		    RESP_OKAY = 0;
    localparam		    RESP_EXOKAY = 1;
-   localparam		    SLVERR = 2;
-   localparam		    DECERR = 3;
+   localparam		    RESP_SLVERR = 2;
+   localparam		    RESP_DECERR = 3;
+
 
 
    
