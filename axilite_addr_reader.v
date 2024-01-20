@@ -1,4 +1,4 @@
-module axilite_reader
+module axilite_addr_reader
   #(parameter ADDR_WIDTH = 32)
    (
     input		    clk,
@@ -58,7 +58,7 @@ module axilite_reader
 	   HOLDING_DATA: do_data_hold();
 	 endcase // case (state)
       end
-      
+   end // always @ (posedge clk or posedge rst)
 endmodule // axilite_reader
 
    

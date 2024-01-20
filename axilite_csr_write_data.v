@@ -14,16 +14,15 @@ module axilite_csr_write_data
     input		       addr_good,
     input		       wvalid,
     input [num_strobe-1:0]     wstrobe, 
-    output		       deassert_addr,
     output reg [DATA_SIZE-1:0] regs,
     output reg		       wready,
     // to let bresp know what it needs to write
-    output [3:0]	       resp,
+    output [1:0]	       resp,
     output		       resp_valid 		       
     );
 
    
-   localparam		    num_strobe = DATA_SIZE/8;
+   localparam		    num_strobe = DATA_WIDTH/8;
    localparam		    num_addr_bits_to_zero = $clog2(DATA_WIDTH/8);
 
 
@@ -32,7 +31,7 @@ module axilite_csr_write_data
    assign resp = good_addr_write ? RESP_OKAY : RESP_SLVERR;
    
    wire [ADDR_SIZE-1:0]	    real_addr; // we zero out the num_addr_bits_to_zero bits to dword/qword align this
-   assign real_addr = {addr[ADDR_SIZE-1:num_addr_bits_to_zero],num_addr_bits_to_zero*{0}};
+   assign real_addr = {addr[ADDR_SIZE-1:num_addr_bits_to_zero],{num_addr_bits_to_zero{1'b0}}};
 
    wire		 addr_out_of_range;
    assign addr_out_of_range = real_addr*8 > DATA_SIZE - DATA_WIDTH;
@@ -54,7 +53,7 @@ module axilite_csr_write_data
 	 if(good_addr_write) begin
 	    for(i = 0; i < num_strobe; i ++)
 	      if(wstrobe[i])
-		regs[(addr_good + i)*8 +: 8] = wdata[i*8+:8];
+		regs[(real_addr + i)*8 +: 8] = wdata[i*8+:8];
 	 end
 	 wready <= 1;
       end

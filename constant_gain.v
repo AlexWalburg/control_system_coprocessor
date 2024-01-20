@@ -7,8 +7,7 @@ module constant_gain #(parameter MSB = 31)
     input	   data_en,
     input [MSB:0]  data_in,
     output [MSB:0] out,
-    output	   data_en_out,
-    output	   param_en
+    output	   data_en_out
     );
    reg [MSB:0] gain;
    reg [MSB:0] data_out;
