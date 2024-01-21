@@ -5,7 +5,8 @@ module axilite_csr_write_data
     parameter RESP_OKAY = 0,
     parameter RESP_EXOKAY = 1,
     parameter RESP_SLVERR = 2,
-    parameter RESP_DECERR = 3)
+    parameter RESP_DECERR = 3,
+    parameter INITIAL_VALUE = 0)
    (
     input		       clk,
     input		       rst,
@@ -26,7 +27,7 @@ module axilite_csr_write_data
    localparam		    num_addr_bits_to_zero = $clog2(DATA_WIDTH/8);
 
 
-   wire			    good_addr_write = addr_good && ~addr_out_of_range;
+   wire			    good_addr_write = ~addr_out_of_range;
    assign resp_valid = wready;
    assign resp = good_addr_write ? RESP_OKAY : RESP_SLVERR;
    
@@ -38,7 +39,7 @@ module axilite_csr_write_data
    
    task do_reset();
       begin
-	 regs <= 0;
+	 regs <= INITIAL_VALUE;
 	 wready <= 0;
       end
    endtask // do_reset
@@ -47,13 +48,13 @@ module axilite_csr_write_data
       wready <= 0;
    endtask // do_idle
 
+   integer unsigned i;
    task do_write();
       begin
-	 integer i;
 	 if(good_addr_write) begin
-	    for(i = 0; i < num_strobe; i ++)
+	    for(i = 0; i < num_strobe; i = i + 1)
 	      if(wstrobe[i])
-		regs[(real_addr + i)*8 +: 8] = wdata[i*8+:8];
+		regs[(real_addr + i)*8 +: 8] = wdata[i*8 +:8];
 	 end
 	 wready <= 1;
       end
@@ -63,7 +64,7 @@ module axilite_csr_write_data
       if(rst)
 	do_reset();
       else begin
-	 if(wvalid && ~wready)
+	 if(addr_good && wvalid && ~wready)
 	   do_write();
 	 else
 	   do_idle();

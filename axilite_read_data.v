@@ -29,7 +29,7 @@ module axilite_read_data
    // * 8 is due to byte level addressing, should turn into bitshift
    // - DATA_WIDTH is due to axilite requiring full burst every time
    assign addr_out_of_range = addr*8 > DATA_SIZE - DATA_WIDTH;
-   assign deassert_addr = addr_good;
+   assign deassert_addr = rready;
 
    task read_data();
       begin
