@@ -19,7 +19,8 @@ module axilite_csr_write_data
     output reg		       wready,
     // to let bresp know what it needs to write
     output [1:0]	       resp,
-    output		       resp_valid 		       
+    output		       resp_valid,
+    output		       param_en
     );
 
    
@@ -48,13 +49,40 @@ module axilite_csr_write_data
       wready <= 0;
    endtask // do_idle
 
+
+   // create a param_en symbol on the any pulse
+   reg [1:0] param_en_values;
+   always @(posedge clk or posedge rst) begin
+     if(rst)
+       param_en_values <= 0;
+     else
+       param_en_values[1] <= param_en_values[0];   
+   end
+   assign param_en = param_en_values[1] != param_en_values[0];
+   // generate 1 tick pulse whenever two buffers differ so pulse if bit set can just write to values[0]
+   //  without creating multiple drivers
+   task param_en_csr();
+      if(wdata[0])
+	param_en_values[0] <= ~param_en_values[0];
+   endtask // do_nothing_write
+
    integer unsigned i;
+   task default_write(); // standard full rw write
+      begin
+	 for(i = 0; i < num_strobe; i = i + 1)
+	      if(wstrobe[i])
+		regs[(real_addr + i)*8 +: 8] = wdata[i*8 +:8];
+      end
+   endtask // default_write
+   
+   
    task do_write();
       begin
 	 if(good_addr_write) begin
-	    for(i = 0; i < num_strobe; i = i + 1)
-	      if(wstrobe[i])
-		regs[(real_addr + i)*8 +: 8] = wdata[i*8 +:8];
+	    case (real_addr)
+	      0: param_en_csr(); 
+	      default: default_write();
+	    endcase // case (real_addr)
 	 end
 	 wready <= 1;
       end

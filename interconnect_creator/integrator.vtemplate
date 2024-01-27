@@ -1,0 +1,15 @@
+   // unit $ID, $PortName integrator
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_addr;
+   assign $PortName_addr = demux_addrs[$AddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   integrator
+     #(.MSB($MSB)) $PortName
+       (
+	.clk(clk),
+	.rst(rst),
+	.data_in(wires[$PortName_addr*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.data_en(enables[$PortName_addr]),
+	.param_in(params[$ParamID*AXI_UNIT_SIZE+:INTERNAL_PRECISION]),
+	.param_en(param_en),
+	.data_out(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.data_en_out(enables[$ID])
+	);

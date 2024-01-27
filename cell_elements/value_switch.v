@@ -18,7 +18,7 @@ module value_switch #(parameter MSB = 31,
    reg [MSB:0]	   out;
    reg		   en_out;
 
-   wire		   abs_data = data_in[MSB} ? -data_in : data_in;
+   wire		   abs_data = data_in[MSB] ? -data_in : data_in;
 
    task do_reset();
       begin

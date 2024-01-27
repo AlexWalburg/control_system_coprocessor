@@ -17,7 +17,7 @@ module derivative #(parameter MSB = 31)
 
    task do_reset();
       begin
-	 past_valid <= 0;
+	 past_value <= 0;
 	 past_value_valid <= 0;
 	 out <= 0;
 	 en <= 0;
@@ -26,7 +26,7 @@ module derivative #(parameter MSB = 31)
 
    task load_data();
       begin
-	 if(past_valid_value) begin
+	 if(past_value_valid) begin
 	    out <= data_in - past_value;
 	    past_value <= data_in;
 	    past_value_valid <= 1;

@@ -1,0 +1,43 @@
+module cell_control_system_interconnect
+  #(parameter IN_MSB = $IN_MSB,
+    parameter OUT_MSB = $OUT_MSB,
+    parameter NUM_DECIMAL = $NUM_DECIMAL,
+    parameter INTERNAL_PRECISION = $INTERNAL_PRECISION,
+    parameter AXI_UNIT_SIZE = 32)
+   (
+    input		  clk,
+    input		  rst,
+    input		  param_en,
+    input [$AXI_SIZE-1:0] axi_params,
+    input [IN_MSB:0]	  data,
+    input		  data_en,
+    output [OUT_MSB:0] data_out,
+    output data_out_en);
+
+   localparam NUM_UNITS = $NUM_UNITS; // figure this out later after you've programmed the damn thing
+   localparam NUM_ADDR_BITS  = $clog2(NUM_UNITS);
+   localparam NUM_INPORTS = 1;
+
+   wire [NUM_UNITS*INTERNAL_PRECISION-1:0] wires;
+   wire [NUM_UNITS*AXI_UNIT_SIZE-1:0] params;
+   assign params = axi_params[$AXI_SIZE-1:NUM_UNITS*AXI_UNIT_SIZE];
+   wire [NUM_UNITS-1:0]			   enables;
+   reg [NUM_UNITS*AXI_UNIT_SIZE-1:0] demux_addrs;
+
+   task do_reset();
+      begin
+      demux_addrs <= $INITIAL_ADDRS;   
+      end
+   endtask // do_reset
+      
+   always @(posedge clk or posedge rst) begin
+      if(rst)
+	do_reset();
+      else begin
+	 if(param_en)
+	   demux_addrs <= axi_params[NUM_UNITS*AXI_UNIT_SIZE-1:0];
+      end
+   end
+   
+   assign data_out = wires[$OutID*INTERNAL_PRECISION+:OUT_MSB];
+   assign data_out_en = enables[$OutID];

@@ -1,0 +1,11 @@
+   // unit $ID, in port for data
+   inport #(
+	    .MSB($MSB),
+	    .IN_MSB($IN_MSB)
+	    ) $PortName
+     (.clk(clk),
+      .rst(rst),
+      .in_data(data),
+      .in_data_en(data_en),
+      .internal_data(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+      .internal_data_en(enables[$ID]));

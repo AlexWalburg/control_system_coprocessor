@@ -1,0 +1,16 @@
+module cell_control_system_interconnect
+  #(parameter IN_MSB = 23,
+    parameter OUT_MSB = 23,
+    parameter NUM_DECIMAL = 8,
+    parameter INTERNAL_PRECISION = 64)
+   (input [IN_MSB:0] data,
+    input data_en);
+
+   localparam NUM_UNITS = 19; // figure this out later after you've programmed the damn thing
+   localparam NUM_ADDR_BITS  = $clog2(NUM_UNITS);
+   localparam NUM_INPORTS = 1;
+
+   wire [NUM_UNITS*INTERNAL_PRECISION-1:0] wires;
+   wire [NUM_UNITS*INTERNAL_PRECISION-1:0] params;
+   wire [NUM_UNITS-1:0]			   enables;
+   reg [(NUM_UNITS - NUM_INPORTS)*NUM_ADDR_BITS-1:0] demux_addrs;

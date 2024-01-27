@@ -1,0 +1,15 @@
+import csv
+
+def generate_system_params_mapping(f):
+    """
+    Generates dictionary to a list of tuples, eg
+    {"Order1": [('MSB','$INTERNAL_MSB')...]}
+
+    @param f: csv file to read
+    """
+    reader = csv.reader(f)
+    retdict = {}
+    for i, row in enumerate(reader):
+        if(len(row) % 2 == 0):
+            raise ValueError(f"Row {i+1} does not have an odd number of values!")
+    

@@ -1,0 +1,11 @@
+   // unit $ID, $PortName summer
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_addr;
+   assign $PortName_addr = demux_addrs[$AddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   n_adder
+     #(.NUM_BITS($NUM_BITS), .num_sums($num_sums)) $PortName
+       (.clk(clk),
+	.rst(rst),
+	.data_en(enables[$PortName_addr+$num_sums-1]),
+	.data_in(wires[$PortName_addr*INTERNAL_PRECISION+:$num_sums*INTERNAL_PRECISION]),
+	.data_out(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.data_en_out(enables[$ID]));

@@ -1,0 +1,14 @@
+   // unit $ID-$ExtraAddrID, error subtractor, note this takes up two entries!
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_main_addr;
+   assign $PortName_main_addr = demux_addrs[$AddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_err_addr;
+   assign $PortName_err_addr = demux_addrs[$ExtraAddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   error_subber #(.NUM_BITS($NUM_BITS)) $PortName
+     (.clk(clk),
+      .rst(rst),
+      .data_en(enables[$PortName_main_addr]),
+      .data_in(wires[$PortName_main_addr*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+      .extra_data(wires[$PortName_err_addr*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+      .data_out(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+      .data_en_out(enables[$ID]));
+

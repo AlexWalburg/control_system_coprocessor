@@ -1,0 +1,15 @@
+   // unit $ID, out port for data
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_addr;
+   assign $PortName_addr = demux_addrs[$AddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   outport
+     #(.OUT_MSB($OUT_MSB),
+       .MSB($MSB),
+       .NUM_BITS_DECIMAL($NUM_BITS_DECIMAL)) $PortName
+       (
+	.clk(clk),
+	.rst(rst),
+	.internal_data(wires[$PortName_addr*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.internal_data_en(enables[$PortName_addr]),
+	.out_data(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.out_data_en(enables[$ID])
+	);

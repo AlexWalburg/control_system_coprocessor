@@ -1,0 +1,18 @@
+   // Unit $ID, $PortName Constant gain block
+   wire [NUM_ADDR_BITS-1:0]		    $PortName_addr;
+   assign $PortName_addr = demux_addrs[$AddrID*AXI_UNIT_SIZE+:NUM_ADDR_BITS];
+   constant_gain
+     #(.MSB($MSB),
+       .GAIN_SIZE($GAIN_SIZE-1),
+       .DEFAULT_GAIN($DEFAULT_GAIN_SIGN$GAIN_SIZE'd$DEFAULT_GAIN),
+       .NUM_DECIMAL($NUM_DECIMAL)) $PortName
+       (
+	.clk(clk),
+	.rst(rst),
+	.data_in(wires[$PortName_addr*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.data_en(enables[$PortName_addr]),
+	.param_in(params[$ParamID*AXI_UNIT_SIZE+:$GAIN_SIZE]),
+	.param_en(param_en),
+	.out(wires[$ID*INTERNAL_PRECISION+:INTERNAL_PRECISION]),
+	.data_en_out(enables[$ID])
+	);

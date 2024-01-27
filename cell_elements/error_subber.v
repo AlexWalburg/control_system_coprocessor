@@ -1,14 +1,15 @@
-module n_adder #(parameter NUM_BITS=32,
-		 num_sums = 2)
+module error_subber #(parameter NUM_BITS=32)
    (
-    input			  clk,
-    input			  rst,
-    input			  data_en,
-    input [NUM_BITS*num_sums-1:0] data_in,
-    output [NUM_BITS-1:0]	  data_out,
-    output			  data_en_out
+    input		  clk,
+    input		  rst,
+    input		  data_en,
+    input [NUM_BITS-1:0]  data_in,
+    input [NUM_BITS-1:0]  extra_data,
+    output [NUM_BITS-1:0] data_out,
+    output		  data_en_out
     );
-   localparam			  MSB = NUM_BITS - 1;
+
+   localparam		  MSB = NUM_BITS - 1;
    
    reg [MSB:0]	   sum;
    assign data_out = sum;
@@ -30,9 +31,7 @@ module n_adder #(parameter NUM_BITS=32,
    integer i;
    task do_write();
       begin
-	 sum <= data_in[0+:NUM_BITS];
-	 for (i = 1; i < num_sums; i = i + 1)
-	   sum <= sum + data_in[i*NUM_BITS+:NUM_BITS];
+	 sum <= data_in - extra_data;
 	 en <=1;
       end
    endtask // do_write

@@ -23,7 +23,9 @@ module axilite_write_channel
     output		   bvalid,
     input		   bready,
     // internal regs data
-    output [DATA_SIZE-1:0] regs
+    output [DATA_SIZE-1:0] regs,
+    // nonaxilite singals from writing
+    output		   param_en
     ); 
    localparam		   num_strobe = DATA_WIDTH/8;
 
@@ -71,7 +73,8 @@ module axilite_write_channel
       .regs(regs),
       .wready(wready),
       .resp(resp),
-      .resp_valid(resp_valid)
+      .resp_valid(resp_valid),
+      .param_en(param_en)
       );
 
    axilite_bresp bresp_handler
