@@ -13,6 +13,7 @@ module axi_csr_write_data_tb();
    wire	      bvalid;
    wire [1:0] bresp;
    wire [32*4-1:0] regs;
+   wire		   param_en;
    
    
    always #1 clk <= ~clk;
@@ -59,7 +60,7 @@ module axi_csr_write_data_tb();
       rst <= 1;
       #2;
       rst <= 0;
-      do_write(0,32'h11223344,4'b1111);
+      do_write(0,1,4'b1111);
       do_write(4,32'h55667788,4'b1011);
       $finish();
    end

@@ -10,7 +10,7 @@ module cell_axilite
     input		    aclk,
     input		    aresetn,
     // read addr channel
-    input [ADDR_SIZE-1:0]  araddr,
+    input [ADDR_SIZE-1:0]   araddr,
     input		    arvalid,
     output		    arready,
     // read data channel
@@ -19,7 +19,7 @@ module cell_axilite
     output		    rvalid,
     input		    rready,
     // write address channel
-    input [ADDR_SIZE-1:0]  awaddr,
+    input [ADDR_SIZE-1:0]   awaddr,
     input		    awvalid,
     output		    awready,
     // write data channel
@@ -30,12 +30,16 @@ module cell_axilite
     // write response channel
     output [1:0]	    bresp,
     output		    bvalid,
-    input		    bready
+    input		    bready,
+    // data for config of another item
+    output [DATA_SIZE-1:0]  regs_out,
+    output		    param_en
     );
 
    localparam		    num_strobe = DATA_WIDTH/8;
 
    wire [DATA_SIZE-1:0]	    regs;
+   assign regs_out = regs;
 
    wire			    clk = aclk;
    wire			    rst = ~aresetn;
@@ -61,7 +65,8 @@ module cell_axilite
      .bresp(bresp),
      .bvalid(bvalid),
      .bready(bready),
-     .regs(regs)
+     .regs(regs),
+     .param_en(param_en)
      );
 
    axilite_read_channel
